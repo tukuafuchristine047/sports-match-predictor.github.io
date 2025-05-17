@@ -234,7 +234,7 @@
                 return;
             }
             const predictions = generatePredictions(team1, team2);
-            const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${predictions}`;
+            const deepLink = `sportsmatch://predictions?match=${predictions}`;
             const downloadPage = 'download-page';
             window.location = deepLink;
             setTimeout(() => {
