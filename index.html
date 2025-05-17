@@ -119,26 +119,35 @@
     function viewPredictions(team1, team2) {
         const match = `${team1} vs ${team2}`;
         const encodedMatch = encodeURIComponent(match);
-        const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${encodedMatch}`;
+        // Primary deep link (HTTPS)
+        const httpsDeepLink = `https://tukuafuchristine047.github.io/predictions?match=${encodedMatch}`;
+        // Fallback custom scheme
+        const customDeepLink = `sportmatchpredictor://predictions?match=${encodedMatch}`;
         const downloadUrl = "https://github.com/tukuafuchristine047/apk_release/releases/download/app/app-release.apk";
 
         // Check if the user is on a mobile device
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        console.log(`Device is mobile: ${isMobile}, Deep link: ${deepLink}`);
+        console.log(`Device is mobile: ${isMobile}, HTTPS Deep link: ${httpsDeepLink}, Custom Deep link: ${customDeepLink}`);
 
         if (isMobile) {
-            // Try to open the app
+            // Try custom scheme first
             const iframe = document.createElement("iframe");
             iframe.style.display = "none";
-            iframe.src = deepLink;
+            iframe.src = customDeepLink;
             document.body.appendChild(iframe);
 
-            // Fallback to download page if app is not installed
+            // Fallback to HTTPS deep link
+            setTimeout(() => {
+                iframe.src = httpsDeepLink;
+                console.log("Trying HTTPS deep link");
+            }, 500);
+
+            // Fallback to download modal if app is not installed
             setTimeout(() => {
                 console.log("App not opened, showing download modal");
                 showModal("app-download-modal");
                 document.body.removeChild(iframe);
-            }, 1500);
+            }, 2000);
         } else {
             console.log("Desktop device, showing download modal");
             showModal("app-download-modal");
