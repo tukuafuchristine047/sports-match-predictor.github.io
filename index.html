@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Match Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <div class="container mx-auto max-w-7xl px-4 py-8 flex-grow">
+        <!-- Header -->
+        <h1 class="text-3xl font-bold text-gray-800 text-center">Sports Match Predictor</h1>
+
+        <!-- Filter by Sport -->
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold text-gray-800">Filter by Sport</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Football')">Football</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Basketball')">Basketball</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Hockey')">Hockey</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Tennis')">Tennis</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Volleyball')">Volleyball</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Baseball')">Baseball</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('American Football')">American Football</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Rugby Union')">Rugby Union</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Cricket')">Cricket</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('Handball')">Handball</button>
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition" onclick="filterMatches('All')">All</button>
+            </div>
+        </div>
+
+        <!-- Upcoming Matches -->
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold text-gray-800">Upcoming Matches</h2>
+            <div id="match-list" class="mt-4"></div>
+        </div>
+
+        <!-- View Prediction Statistics -->
+        <div class="mt-8 text-center">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded transition" onclick="showStats()">View Prediction Statistics</button>
+        </div>
+    </div>
+
+    <!-- Download Prediction Modal -->
+    <div id="download-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
+            <h2 class="text-xl font-semibold text-gray-800">Download Prediction</h2>
+            <p class="mt-2 text-gray-600">Download Actual Prediction File</p>
+            <div class="mt-4 flex justify-end space-x-2">
+                <a href="#" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Download Actual Prediction File</a>
+                <button class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition" onclick="closeModal('download-modal')">Back to Matches</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prediction Statistics Section -->
+    <div id="stats-section" class="hidden container mx-auto max-w-7xl px-4 py-8">
+        <h2 class="text-xl font-semibold text-gray-800">Prediction Statistics</h2>
+        <div class="mt-4 bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-semibold text-gray-800">Accuracy Over Time</h3>
+            <div id="accuracy-chart" class="mt-4"></div>
+            <h3 class="text-lg font-semibold text-gray-800 mt-4">Statistics</h3>
+            <p class="text-gray-600">Last Month: 78% accuracy across 150 predictions.</p>
+            <p class="text-gray-600">Last Year: 82% accuracy across 1800 predictions.</p>
+        </div>
+        <div class="mt-4 text-center">
+            <button class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded transition" onclick="showMatches()">Back to Matches</button>
+        </div>
+    </div>
+
+    <!-- App Download Modal -->
+    <div id="app-download-modal" class="modal hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-md w-full">
+            <h2 class="text-xl font-semibold text-gray-800">Download Required</h2>
+            <p class="mt-2 text-gray-600">To view match predictions, please download the Sports Match Predictor App.</p>
+            <div class="mt-4 flex justify-end space-x-2">
+                <a href="https://github.com/tukuafuchristine047/apk_release/releases/download/app/app-release.apk" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded transition">Download App</a>
+                <button class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition" onclick="closeModal('app-download-modal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 py-4 mt-8">
+        <p class="text-center text-gray-600">© 2025 Sports Match Predictor. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Sample matches data (replace with actual data from backend)
+        const matches = [
+            { team1: "Arsenal", team2: "Chelsea", sport: "Football" },
+            { team1: "Lakers", team2: "Celtics", sport: "Basketball" },
+            { team1: "Maple Leafs", team2: "Canadiens", sport: "Hockey" }
+        ];
+
+        // Render matches
+        function renderMatches(sport = "All") {
+            const matchList = document.getElementById("match-list");
+            matchList.innerHTML = "";
+            matches
+                .filter(match => sport === "All" || match.sport === sport)
+                .forEach(match => {
+                    const matchDiv = document.createElement("div");
+                    matchDiv.className = "bg-white p-4 rounded-lg shadow-md mb-4";
+                    matchDiv.innerHTML = `
+                        <p class="text-gray-800">${match.team1} vs ${match.team2} (${match.sport})</p>
+                        <button class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded transition mt-2" onclick="viewPredictions('${match.team1}', '${match.team2}')">View Predictions</button>
+                    `;
+                    matchList.appendChild(matchDiv);
+                });
+        }
+
+        // Filter matches by sport
+        function filterMatches(sport) {
+            renderMatches(sport);
+        }
+
+        // View predictions
+        function viewPredictions(team1, team2) {
+            const match = `${team1} vs ${team2}`;
+            const encodedMatch = encodeURIComponent(match);
+            const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${encodedMatch}`;
+            const downloadUrl = "https://github.com/tukuafuchristine047/apk_release/releases/download/app/app-release.apk";
+
+            // Check if the user is on a mobile device
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // Try to open the app
+                window.location.href = deepLink;
+
+                // Fallback to download page if app is not installed (timeout to allow app to open)
+                setTimeout(() => {
+                    // If the app doesn't open, show the download modal
+                    showModal("app-download-modal");
+                }, 1000);
+            } else {
+                // On desktop, show the download modal
+                showModal("app-download-modal");
+            }
+        }
+
+        // Modal handling
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove("hidden");
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add("hidden");
+        }
+
+        // Show/hide stats and matches
+        function showStats() {
+            document.getElementById("stats-section").classList.remove("hidden");
+            document.querySelector(".container").classList.add("hidden");
+        }
+
+        function showMatches() {
+            document.getElementById("stats-section").classList.add("hidden");
+            document.querySelector(".container").classList.remove("hidden");
+        }
+
+        // Initial render
+        renderMatches();
+    </script>
+</body>
+</html>
