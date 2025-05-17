@@ -86,82 +86,87 @@
     </footer>
 
     <script>
-        // Sample matches data (replace with actual data from backend)
-        const matches = [
-            { team1: "Arsenal", team2: "Chelsea", sport: "Football" },
-            { team1: "Lakers", team2: "Celtics", sport: "Basketball" },
-            { team1: "Maple Leafs", team2: "Canadiens", sport: "Hockey" }
-        ];
+    // Sample matches data (replace with actual data from backend)
+    const matches = [
+        { team1: "Arsenal", team2: "Chelsea", sport: "Football" },
+        { team1: "Lakers", team2: "Celtics", sport: "Basketball" },
+        { team1: "Maple Leafs", team2: "Canadiens", sport: "Hockey" }
+    ];
 
-        // Render matches
-        function renderMatches(sport = "All") {
-            const matchList = document.getElementById("match-list");
-            matchList.innerHTML = "";
-            matches
-                .filter(match => sport === "All" || match.sport === sport)
-                .forEach(match => {
-                    const matchDiv = document.createElement("div");
-                    matchDiv.className = "bg-white p-4 rounded-lg shadow-md mb-4";
-                    matchDiv.innerHTML = `
-                        <p class="text-gray-800">${match.team1} vs ${match.team2} (${match.sport})</p>
-                        <button class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded transition mt-2" onclick="viewPredictions('${match.team1}', '${match.team2}')">View Predictions</button>
-                    `;
-                    matchList.appendChild(matchDiv);
-                });
-        }
+    // Render matches
+    function renderMatches(sport = "All") {
+        const matchList = document.getElementById("match-list");
+        matchList.innerHTML = "";
+        matches
+            .filter(match => sport === "All" || match.sport === sport)
+            .forEach(match => {
+                const matchDiv = document.createElement("div");
+                matchDiv.className = "bg-white p-4 rounded-lg shadow-md mb-4";
+                matchDiv.innerHTML = `
+                    <p class="text-gray-800">${match.team1} vs ${match.team2} (${match.sport})</p>
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded transition mt-2" onclick="viewPredictions('${match.team1}', '${match.team2}')">View Predictions</button>
+                `;
+                matchList.appendChild(matchDiv);
+            });
+    }
 
-        // Filter matches by sport
-        function filterMatches(sport) {
-            renderMatches(sport);
-        }
+    // Filter matches by sport
+    function filterMatches(sport) {
+        renderMatches(sport);
+    }
 
-        // View predictions
-        function viewPredictions(team1, team2) {
-            const match = `${team1} vs ${team2}`;
-            const encodedMatch = encodeURIComponent(match);
-            const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${encodedMatch}`;
-            const downloadUrl = "https://github.com/tukuafuchristine047/apk_release/releases/download/app/app-release.apk";
+    // View predictions
+    function viewPredictions(team1, team2) {
+        const match = `${team1} vs ${team2}`;
+        const encodedMatch = encodeURIComponent(match);
+        const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${encodedMatch}`;
+        const downloadUrl = "https://github.com/tukuafuchristine047/apk_release/releases/download/app/app-release.apk";
 
-            // Check if the user is on a mobile device
-            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        // Check if the user is on a mobile device
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        console.log(`Device is mobile: ${isMobile}, Deep link: ${deepLink}`);
 
-            if (isMobile) {
-                // Try to open the app
-                window.location.href = deepLink;
+        if (isMobile) {
+            // Try to open the app
+            const iframe = document.createElement("iframe");
+            iframe.style.display = "none";
+            iframe.src = deepLink;
+            document.body.appendChild(iframe);
 
-                // Fallback to download page if app is not installed (timeout to allow app to open)
-                setTimeout(() => {
-                    // If the app doesn't open, show the download modal
-                    showModal("app-download-modal");
-                }, 1000);
-            } else {
-                // On desktop, show the download modal
+            // Fallback to download page if app is not installed
+            setTimeout(() => {
+                console.log("App not opened, showing download modal");
                 showModal("app-download-modal");
-            }
+                document.body.removeChild(iframe);
+            }, 1500);
+        } else {
+            console.log("Desktop device, showing download modal");
+            showModal("app-download-modal");
         }
+    }
 
-        // Modal handling
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.remove("hidden");
-        }
+    // Modal handling
+    function showModal(modalId) {
+        document.getElementById(modalId).classList.remove("hidden");
+    }
 
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add("hidden");
-        }
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add("hidden");
+    }
 
-        // Show/hide stats and matches
-        function showStats() {
-            document.getElementById("stats-section").classList.remove("hidden");
-            document.querySelector(".container").classList.add("hidden");
-        }
+    // Show/hide stats and matches
+    function showStats() {
+        document.getElementById("stats-section").classList.remove("hidden");
+        document.querySelector(".container").classList.add("hidden");
+    }
 
-        function showMatches() {
-            document.getElementById("stats-section").classList.add("hidden");
-            document.querySelector(".container").classList.remove("hidden");
-        }
+    function showMatches() {
+        document.getElementById("stats-section").classList.add("hidden");
+        document.querySelector(".container").classList.remove("hidden");
+    }
 
-        // Initial render
-        renderMatches();
-    </script>
+    // Initial render
+    renderMatches();
+</script>
 </body>
 </html>
