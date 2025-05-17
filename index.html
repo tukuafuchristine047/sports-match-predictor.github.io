@@ -105,32 +105,17 @@
             </section>
         </main>
     </div>
-<!-- Download Page -->
-<div id="download-page" class="hidden min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
-        <!-- App Icon (optional, замените src на свою иконку) -->
-        <img src="https://raw.githubusercontent.com/tukuafuchristine047/apk_release/main/ic_launcher.png" alt="App Icon" class="mx-auto mb-4 w-20 h-20 rounded shadow">
-        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Install Sports Match Predictor</h2>
-        <p class="text-gray-600 mb-6">
-            To view match predictions, please download and install the Sports Match Predictor app.
-        </p>
-        <div class="flex flex-col space-y-4 mb-4">
-            <button onclick="downloadApp()" class="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-700 transition shadow">
-                Download APK (Android)
-            </button>
-            <!-- Если будет Google Play, раскомментируйте
-            <a href="https://play.google.com/store/apps/details?id=com.example.sport_match_predictor_app" 
-               class="bg-green-500 text-white py-2 px-6 rounded hover:bg-green-700 transition shadow"
-               target="_blank" rel="noopener">
-                Google Play
-            </a>
-            -->
+    <!-- Download Page -->
+    <div id="download-page" class="hidden min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
+            <h2 class="text-2xl font-semibold mb-4">Download Required</h2>
+            <p class="text-gray-600 mb-6">To view match results, please download the SportsMatchPredictorApp.</p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="downloadApp()" class="bg-blue-500 text-white py-2 px-6 rounded hover:bg-blue-700 transition">Download App</button>
+                <a href="#" onclick="showPage('main-page')" class="text-blue-500 py-2 px-4">Cancel</a>
+            </div>
         </div>
-        <p class="text-xs text-gray-400 mb-2">After downloading, open the APK file and follow the instructions to install.<br>
-        You may need to allow installation from unknown sources in your device settings.</p>
-        <a href="#" onclick="showPage('main-page')" class="text-blue-500 py-2 px-4 inline-block hover:underline">Cancel</a>
     </div>
-</div>
     <!-- Statistics Page -->
     <div id="stats-page" class="hidden">
         <main class="max-w-7xl mx-auto p-6 flex-1">
@@ -243,22 +228,21 @@
 
         // Function to view predictions
         function viewPredictions(team1, team2) {
-    const isDesktop = !/Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) && window.innerWidth > 1024;
-    if (isDesktop) {
-        alert('Please open this website on a mobile device to view predictions.');
-        return;
-    }
-    const predictions = generatePredictions(team1, team2);
-    // ИСПОЛЬЗУЕМ deep link, который прописан в AndroidManifest.xml
-    const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${predictions}`;
-    const downloadPage = 'download-page';
-    window.location = deepLink;
-    setTimeout(() => {
-        if (document.hasFocus()) {
-            showPage(downloadPage);
+            const isDesktop = !/Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) && window.innerWidth > 1024;
+            if (isDesktop) {
+                alert('Please open this website on a mobile device to view predictions.');
+                return;
+            }
+            const predictions = generatePredictions(team1, team2);
+            const deepLink = `sportsmatch://predictions?match=${predictions}`;
+            const downloadPage = 'download-page';
+            window.location = deepLink;
+            setTimeout(() => {
+                if (document.hasFocus()) {
+                    showPage(downloadPage);
+                }
+            }, 2000);
         }
-    }, 2000);
-}
 
         // Function to handle app download
         function downloadApp() {
@@ -267,7 +251,7 @@
                 alert('Please open this website on a mobile device to download the app.');
                 return;
             }
-            window.location = 'https://github.com/tukuafuchristine047/apk_release/releases/download/app/app-release.apk'; // Replace with actual app store link
+            window.location = 'https://yourwebsite.com/download-app'; // Replace with actual app store link
         }
 
         // Function to show/hide pages
