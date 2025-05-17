@@ -227,22 +227,24 @@
         }
 
         // Function to view predictions
-        function viewPredictions(team1, team2) {
-            const isDesktop = !/Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) && window.innerWidth > 1024;
-            if (isDesktop) {
-                alert('Please open this website on a mobile device to view predictions.');
-                return;
-            }
-            const predictions = generatePredictions(team1, team2);
-            const deepLink = `sportsmatch://predictions?match=${predictions}`;
-            const downloadPage = 'download-page';
-            window.location = deepLink;
-            setTimeout(() => {
-                if (document.hasFocus()) {
-                    showPage(downloadPage);
-                }
-            }, 2000);
+function viewPredictions(team1, team2) {
+    const isDesktop = !/Mobi|Android|iPhone|iPad|iPod/.test(navigator.userAgent) && window.innerWidth > 1024;
+    if (isDesktop) {
+        alert('Please open this website on a mobile device to view predictions.');
+        return;
+    }
+    const predictions = generatePredictions(team1, team2);
+
+    // Используем deep link под AndroidManifest
+    const deepLink = `https://tukuafuchristine047.github.io/sports-match-predictor.github.io/predictions?match=${predictions}`;
+    const downloadPage = 'download-page';
+    window.location = deepLink;
+    setTimeout(() => {
+        if (document.hasFocus()) {
+            showPage(downloadPage);
         }
+    }, 2000);
+}
 
         // Function to handle app download
         function downloadApp() {
