@@ -1,11 +1,11 @@
 <script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+        return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
         if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
             try {
                 var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
@@ -19,11 +19,11 @@
 
                 // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
                 var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                    row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
                 );
                 // Fallback
                 if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
+                    headerRowIndex = 0;
                 }
 
                 // Convert filtered JSON back to CSV
@@ -36,9 +36,11 @@
             }
         }
         return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+    }
+</script>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,42 +53,53 @@
             background-position: center;
             background-repeat: no-repeat;
         }
+
         .match-frame::-webkit-scrollbar {
             background: transparent;
         }
+
         .match-frame::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.3);
             border-radius: 10px;
         }
+
         .match-frame {
             scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
         }
+
         .scrollbar-transparent::-webkit-scrollbar {
             height: 8px;
             background: transparent;
         }
+
         .scrollbar-transparent::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.5);
             border-radius: 4px;
         }
+
         .scrollbar-transparent {
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
         }
-        @media (max-width: 640px) {
+
+        @media (max-width: 440px) {
             .match-container img {
                 width: 20px;
                 height: 20px;
             }
-            .match-container p, .match-container button {
+
+            .match-container p,
+            .match-container button {
                 font-size: 0.75rem;
             }
+
             .match-container button {
                 padding: 0.25rem 0.5rem;
             }
         }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white flex flex-col min-h-screen">
     <!-- Header -->
     <header class="h-48 flex items-center justify-center">
@@ -96,7 +109,8 @@
     <!-- Search Bar -->
     <div class="flex justify-center my-4 px-4">
         <div class="py-4 px-4 md:px-8 w-full max-w-3xl">
-            <input type="text" id="searchInput" placeholder="Search teams by name..." class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="text" id="searchInput" placeholder="Search teams by name..."
+                class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
     </div>
 
@@ -104,16 +118,36 @@
     <div class="flex justify-center my-4 px-4">
         <div class="mb-6 overflow-x-auto scrollbar-transparent flex justify-center">
             <div id="sportButtons" class="flex space-x-2 p-2 overflow-x-auto">
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Soccer">Soccer</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Basketball">Basketball</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Tennis">Tennis</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Hockey">Hockey</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Baseball">Baseball</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Rugby">Rugby</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Volleyball">Volleyball</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Badminton">Badminton</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="Boxing">Boxing</button>
-                <button class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1" data-sport="All">All</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Soccer">Soccer</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Basketball">Basketball</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Tennis">Tennis</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Hockey">Hockey</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Baseball">Baseball</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Rugby">Rugby</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Volleyball">Volleyball</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Badminton">Badminton</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Boxing">Boxing</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="All">All</button>
             </div>
         </div>
     </div>
@@ -219,20 +253,27 @@
             }
 
             matches.forEach(match => {
-                if (searchQuery === "" || 
-                    match.team1.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                if (searchQuery === "" ||
+                    match.team1.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     match.team2.toLowerCase().includes(searchQuery.toLowerCase())) {
                     const matchDiv = document.createElement("div");
                     matchDiv.className = "match-container flex items-center justify-between p-4 bg-gray-800 rounded-md w-full";
                     matchDiv.innerHTML = `
-                        <p class="text-sm md:text-base">${match.time}</p>
-                        <div class="flex items-center space-x-2">
-                            <img src="${match.logo1}" alt="${match.team1} logo" class="w-6 h-6 md:w-8 md:h-8">
-                            <p class="text-sm md:text-base">${match.team1} vs ${match.team2}</p>
-                            <img src="${match.logo2}" alt="${match.team2} logo" class="w-6 h-6 md:w-8 md:h-8">
-                        </div>
-                        <button onclick="viewPrediction()" class="px-3 py-1 md:px-4 md:py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-xs md:text-sm">View Prediction</button>
-                    `;
+            <div class="flex items-center space-x-4">
+                <p class="text-sm md:text-base text-gray-300 w-12">${match.time}</p>
+                <div class="teams flex flex-col gap-2">
+                    <div class="team flex items-center gap-2">
+                        <img src="${match.logo1}" alt="${match.team1} logo" class="w-6 h-6 md:w-8 md:h-8">
+                        <p class="text-sm md:text-base">${match.team1}</p>
+                    </div>
+                    <div class="team flex items-center gap-2">
+                        <img src="${match.logo2}" alt="${match.team2} logo" class="w-6 h-6 md:w-8 md:h-8">
+                        <p class="text-sm md:text-base">${match.team2}</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="viewPrediction()" class="px-3 py-1 md:px-4 md:py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-xs md:text-sm whitespace-nowrap">View Prediction</button>
+        `;
                     container.appendChild(matchDiv);
                 }
             });
@@ -291,4 +332,5 @@
         loadMatches();
     </script>
 </body>
+
 </html>
