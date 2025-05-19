@@ -300,13 +300,26 @@
         }
 
         function viewPrediction(sport, team1, team2) {
-            if (typeof Android !== 'undefined' && Android.showPrediction) {
-                // Если приложение установлено, отправляем данные в Android
-                Android.showPrediction(sport, team1, team2);
-            } else {
-                // Если приложение не установлено, показываем модальное окно
-                document.getElementById("downloadModal").classList.remove("hidden");
-            }
+            // Попробуем открыть приложение через deep link
+            const deepLink = `intent://tukuafuchristine047.github.io/sports-match-predictor.github.io/#predict/${sport}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}#Intent;scheme=https;package=com.example.sportsmatchpredictor;end`;
+
+            // Создаем скрытый iframe для открытия приложения
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = deepLink;
+            document.body.appendChild(iframe);
+
+            // Удаляем iframe через короткое время
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+
+                // Если приложение не открылось, показываем модальное окно
+                setTimeout(() => {
+                    if (!document.hasFocus()) {
+                        document.getElementById("downloadModal").classList.remove("hidden");
+                    }
+                }, 500);
+            }, 100);
         }
 
         function downloadApp() {
