@@ -1,0 +1,338 @@
+<script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+        return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                    row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                    headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+    }
+</script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Match Predictor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        header {
+            background-image: url('https://d.ibtimes.co.uk/en/full/1385430/world-cup-goal-celebration-colombia.webp?w=745&f=d388510102e36a01519b1bd2012b5095');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .match-frame::-webkit-scrollbar {
+            background: transparent;
+        }
+
+        .match-frame::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .match-frame {
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+        }
+
+        .scrollbar-transparent::-webkit-scrollbar {
+            height: 8px;
+            background: transparent;
+        }
+
+        .scrollbar-transparent::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        .scrollbar-transparent {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+        }
+
+        @media (max-width: 440px) {
+            .match-container img {
+                width: 20px;
+                height: 20px;
+            }
+
+            .match-container p,
+            .match-container button {
+                font-size: 0.75rem;
+            }
+
+            .match-container button {
+                padding: 0.25rem 0.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="h-48 flex items-center justify-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">Sports Match Predictor</h1>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="flex justify-center my-4 px-4">
+        <div class="py-4 px-4 md:px-8 w-full max-w-3xl">
+            <input type="text" id="searchInput" placeholder="Search teams by name..."
+                class="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+    </div>
+
+    <!-- Button Panel -->
+    <div class="flex justify-center my-4 px-4">
+        <div class="mb-6 overflow-x-auto scrollbar-transparent flex justify-center">
+            <div id="sportButtons" class="flex space-x-2 p-2 overflow-x-auto">
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Soccer">Soccer</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Basketball">Basketball</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Tennis">Tennis</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Hockey">Hockey</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Baseball">Baseball</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Rugby">Rugby</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Volleyball">Volleyball</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Badminton">Badminton</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="Boxing">Boxing</button>
+                <button
+                    class="sport-btn bg-blue-600 rounded-lg hover:bg-blue-700 transition md:text-base whitespace-nowrap text-xs px-2 py-1"
+                    data-sport="All">All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Frame -->
+    <div class="match-frame flex-1 overflow-y-auto p-4">
+        <div id="matchContainer" class="space-y-4"></div>
+    </div>
+
+    <!-- Modal -->
+    <div id="downloadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 p-6 rounded-md max-w-sm w-full text-center">
+            <h2 class="text-2xl font-bold mb-4">Download Required</h2>
+            <p class="mb-6">To view match predictions, please download the Sports Match Predictor App.</p>
+            <div class="flex justify-end space-x-2">
+                <button onclick="downloadApp()" class="px-4 py-2 bg-green-600 rounded-md hover:bg-green-700">Download
+                    App</button>
+                <button onclick="closeModal()" class="px-4 py-2 bg-red-600 rounded-md hover:bg-red-700">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-gray-400">
+        © 2025 Sports Match Predictor. All rights reserved.
+    </footer>
+
+    <script>
+        // API endpoints for each sport
+        const apiEndpoints = {
+            'Soccer': 'https://your-website.com/soccer/api',
+            'Basketball': 'https://your-website.com/basketball/api',
+            'Tennis': 'https://your-website.com/tennis/api',
+            'Hockey': 'https://your-website.com/hockey/api',
+            'Baseball': 'https://your-website.com/baseball/api',
+            'Rugby': 'https://your-website.com/rugby/api',
+            'Volleyball': 'https://your-website.com/volleyball/api',
+            'Badminton': 'https://your-website.com/badminton/api',
+            'Boxing': 'https://your-website.com/boxing/api'
+        };
+
+        // API key (in production, fetch from environment or secure config)
+        const API_KEY = 'x7k9mPqT3vL8nRwY2cF5bZ6tJ4hD0gN1aE3uW8iQ2oX9lS7yV'; // Replace with actual key or load securely
+
+        // Fallback match data when API is inactive
+        const fallbackMatches = [
+            {
+                time: "21:45",
+                team1: "AS Roma",
+                team2: "AC Milan",
+                logo1: "https://static.flashscore.com/res/image/data/j31Z1pne-GtNb9h2q.png",
+                logo2: "https://static.flashscore.com/res/image/data/WOOHTbSq-fL3dmxxd.png",
+                sport: "Soccer"
+            }
+        ];
+
+        // Simulated app presence check
+        const isAppInstalled = false; // Change to true to simulate app presence
+
+        async function loadMatches(sport = "All", searchQuery = "") {
+            const container = document.getElementById("matchContainer");
+            container.innerHTML = "";
+            let matches = [];
+
+            if (sport === "All") {
+                // Fetch data from all APIs
+                for (const [sportName, apiUrl] of Object.entries(apiEndpoints)) {
+                    try {
+                        const response = await fetch(apiUrl, {
+                            headers: {
+                                'X-API-Key': API_KEY
+                            }
+                        });
+                        if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                        const data = await response.json();
+                        if (data && data.length > 0) {
+                            matches = matches.concat(data.map(match => ({ ...match, sport: sportName })));
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching ${sportName} data:`, error);
+                    }
+                }
+            } else {
+                // Fetch data from specific sport API
+                try {
+                    const response = await fetch(apiEndpoints[sport], {
+                        headers: {
+                            'X-API-Key': API_KEY
+                        }
+                    });
+                    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        matches = matches.concat(data.map(match => ({ ...match, sport })));
+                    }
+                } catch (error) {
+                    console.error(`Error fetching ${sport} data:`, error);
+                }
+            }
+
+            // If no matches were fetched, use fallback data
+            if (matches.length === 0) {
+                matches = fallbackMatches.filter(match => sport === "All" || match.sport === sport);
+            }
+
+            matches.forEach(match => {
+                if (searchQuery === "" ||
+                    match.team1.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    match.team2.toLowerCase().includes(searchQuery.toLowerCase())) {
+                    const matchDiv = document.createElement("div");
+                    matchDiv.className = "match-container flex items-center justify-between p-4 bg-gray-800 rounded-md w-full";
+                    matchDiv.innerHTML = `
+            <div class="flex items-center space-x-4">
+                <p class="text-sm md:text-base text-gray-300 w-12">${match.time}</p>
+                <div class="teams flex flex-col gap-2">
+                    <div class="team flex items-center gap-2">
+                        <img src="${match.logo1}" alt="${match.team1} logo" class="w-6 h-6 md:w-8 md:h-8">
+                        <p class="text-sm md:text-base">${match.team1}</p>
+                    </div>
+                    <div class="team flex items-center gap-2">
+                        <img src="${match.logo2}" alt="${match.team2} logo" class="w-6 h-6 md:w-8 md:h-8">
+                        <p class="text-sm md:text-base">${match.team2}</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="viewPrediction('${match.sport.toLowerCase()}', '${match.team1}', '${match.team2}')" class="px-3 py-1 md:px-4 md:py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-xs md:text-sm whitespace-nowrap">View Prediction</button>
+        `;
+                    container.appendChild(matchDiv);
+                }
+            });
+        }
+
+        function filterSport(sport) {
+            loadMatches(sport, document.getElementById("searchInput").value);
+            // Update button styles
+            document.querySelectorAll(".sport-btn").forEach(btn => {
+                btn.classList.remove("bg-blue-800");
+                btn.classList.add("bg-blue-600");
+                if (btn.dataset.sport === sport) {
+                    btn.classList.remove("bg-blue-600");
+                    btn.classList.add("bg-blue-800");
+                }
+            });
+        }
+
+        function searchTeams() {
+            const searchQuery = document.getElementById("searchInput").value;
+            const activeSport = document.querySelector(".sport-btn.bg-blue-800")?.dataset.sport || "All";
+            loadMatches(activeSport, searchQuery);
+        }
+
+        function viewPrediction(sport, team1, team2) {
+            if (typeof Android !== 'undefined' && Android.showPrediction) {
+                // Если приложение установлено, отправляем данные в Android
+                Android.showPrediction(sport, team1, team2);
+            } else {
+                // Если приложение не установлено, показываем модальное окно
+                document.getElementById("downloadModal").classList.remove("hidden");
+            }
+        }
+
+        function downloadApp() {
+            // Simulate APK download
+            const link = document.createElement("a");
+            link.href = "#"; // Replace with actual APK URL
+            link.download = "SportsMatchPredictor.apk";
+            link.click();
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById("downloadModal").classList.add("hidden");
+        }
+
+        // Add event listeners to sport buttons
+        document.querySelectorAll(".sport-btn").forEach(btn => {
+            btn.addEventListener("click", () => filterSport(btn.dataset.sport));
+        });
+
+        // Add event listener for search input
+        document.getElementById("searchInput").addEventListener("input", searchTeams);
+
+        // Initial load
+        loadMatches();
+    </script>
+</body>
+
+</html>
