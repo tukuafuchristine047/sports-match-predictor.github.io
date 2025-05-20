@@ -301,10 +301,8 @@
 function viewPrediction(sport, team1, team2) {
     console.log(`viewPrediction called with sport: ${sport}, team1: ${team1}, team2: ${team2}`);
     if (typeof Android !== 'undefined' && Android.showPrediction) {
-        // Если WebView активен, используем JavaScript-интерфейс
         Android.showPrediction(sport, team1, team2);
     } else {
-        // Формируем deep link для запуска приложения
         const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
         console.log(`Attempting to open deep link: ${deepLink}`);
         try {
