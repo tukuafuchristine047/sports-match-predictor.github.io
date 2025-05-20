@@ -301,29 +301,66 @@
         
 function viewPrediction(sport, team1, team2) {
     console.log(`viewPrediction called with sport: ${sport}, team1: ${team1}, team2: ${team2}`);
+    
+    // Валидация параметров
     if (!sport || !team1 || !team2) {
         console.error("Invalid parameters: sport, team1, or team2 is undefined or null");
         return;
     }
+
+    // Безопасная обработка параметров
     const safeSport = String(sport).toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
     const safeTeam1 = String(team1).replace(/[^a-zA-Z0-9]/g, '_');
     const safeTeam2 = String(team2).replace(/[^a-zA-Z0-9]/g, '_');
+    
+    // Объект для отправки
+    const predictionData = {
+        sport: safeSport,
+        team1: safeTeam1,
+        team2: safeTeam2
+    };
+
+    // Проверка Android-интерфейса
     if (typeof Android !== 'undefined' && typeof Android.showPrediction === 'function') {
         try {
             Android.showPrediction(safeSport, safeTeam1, safeTeam2);
             console.log("Called Android.showPrediction with safe parameters");
+            return;
         } catch (e) {
             console.error("Error calling Android.showPrediction:", e);
         }
-    } else {
-        const deepLink = `sportsmatchpredictor://predict/${safeSport}/${encodeURIComponent(safeTeam1)}/${encodeURIComponent(safeTeam2)}`;
-        console.log(`Attempting to open deep link: ${deepLink}`);
+    }
+    
+    // Проверка iOS-интерфейса
+    if (typeof webkit !== 'undefined' && 
+        typeof webkit.messageHandlers !== 'undefined' && 
+        typeof webkit.messageHandlers.predictor !== 'undefined') {
         try {
-            window.location.href = deepLink;
+            webkit.messageHandlers.predictor.postMessage(predictionData);
+            console.log("Sent message to iOS webkit.messageHandlers.predictor");
+            return;
         } catch (e) {
-            console.error("Failed to open deep link:", e);
+            console.error("Error sending message to iOS:", e);
         }
     }
+
+    // Fallback: deep link
+    const deepLink = `sportsmatchpredictor://predict/${safeSport}/${encodeURIComponent(safeTeam1)}/${encodeURIComponent(safeTeam2)}`;
+    console.log(`Attempting to open deep link: ${deepLink}`);
+    try {
+        window.location.href = deepLink;
+    } catch (e) {
+        console.error("Failed to open deep link:", e);
+    }
+
+        setTimeout(() => {
+        if (document.hasFocus()) {
+            const modal = document.getElementById("downloadModal");
+            if (modal) {
+                modal.classList.remove("hidden");
+            }
+        }
+    }, 1500);
 }
 
         function downloadApp() {
