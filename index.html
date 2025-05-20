@@ -298,16 +298,16 @@
             const activeSport = document.querySelector(".sport-btn.bg-blue-800")?.dataset.sport || "All";
             loadMatches(activeSport, searchQuery);
         }
+        
 function viewPrediction(sport, team1, team2) {
     console.log(`viewPrediction called with sport: ${sport}, team1: ${team1}, team2: ${team2}`);
-    // Проверяем и очищаем параметры
     if (!sport || !team1 || !team2) {
         console.error("Invalid parameters: sport, team1, or team2 is undefined or null");
         return;
     }
-    const safeSport = sport.toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
-    const safeTeam1 = team1.replace(/[^a-zA-Z0-9]/g, '_');
-    const safeTeam2 = team2.replace(/[^a-zA-Z0-9]/g, '_');
+    const safeSport = String(sport).toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
+    const safeTeam1 = String(team1).replace(/[^a-zA-Z0-9]/g, '_');
+    const safeTeam2 = String(team2).replace(/[^a-zA-Z0-9]/g, '_');
     if (typeof Android !== 'undefined' && typeof Android.showPrediction === 'function') {
         try {
             Android.showPrediction(safeSport, safeTeam1, safeTeam2);
@@ -323,12 +323,6 @@ function viewPrediction(sport, team1, team2) {
         } catch (e) {
             console.error("Failed to open deep link:", e);
         }
-        setTimeout(() => {
-            if (document.hasFocus()) {
-                console.log("App not opened, showing download modal");
-                document.getElementById("downloadModal").classList.remove("hidden");
-            }
-        }, 1500);
     }
 }
 
