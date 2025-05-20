@@ -299,25 +299,23 @@
             loadMatches(activeSport, searchQuery);
         }
 
-        function viewPrediction(sport, team1, team2) {
-            // Фор形成 deep link для приложения
-            const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
+function viewPrediction(sport, team1, team2) {
+    const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
+    console.log(`Attempting to open deep link: ${deepLink}`); // Для отладки
 
-            // Пытаемся открыть deep link
-            try {
-                window.location.href = deepLink;
-            } catch (e) {
-                console.error("Failed to open deep link:", e);
-            }
+    try {
+        window.location.href = deepLink;
+    } catch (e) {
+        console.error("Failed to open deep link:", e);
+    }
 
-            // Устанавливаем таймер, чтобы показать модальное окно, если приложение не открылось
-            setTimeout(() => {
-                if (document.hasFocus()) {
-                    // Если страница всё ещё в фокусе, приложение, вероятно, не установлено
-                    document.getElementById("downloadModal").classList.remove("hidden");
-                }
-            }, 1500); // Увеличиваем таймер до 1.5 секунд для большей надёжности
+    setTimeout(() => {
+        if (document.hasFocus()) {
+            console.log("App not opened, showing download modal");
+            document.getElementById("downloadModal").classList.remove("hidden");
         }
+    }, 1500);
+}
 
         function downloadApp() {
             // Simulate APK download
