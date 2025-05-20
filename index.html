@@ -300,10 +300,23 @@
         }
 function viewPrediction(sport, team1, team2) {
     console.log(`viewPrediction called with sport: ${sport}, team1: ${team1}, team2: ${team2}`);
-    if (typeof Android !== 'undefined' && Android.showPrediction) {
-        Android.showPrediction(sport, team1, team2);
+    // Проверяем и очищаем параметры
+    if (!sport || !team1 || !team2) {
+        console.error("Invalid parameters: sport, team1, or team2 is undefined or null");
+        return;
+    }
+    const safeSport = sport.toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
+    const safeTeam1 = team1.replace(/[^a-zA-Z0-9]/g, '_');
+    const safeTeam2 = team2.replace(/[^a-zA-Z0-9]/g, '_');
+    if (typeof Android !== 'undefined' && typeof Android.showPrediction === 'function') {
+        try {
+            Android.showPrediction(safeSport, safeTeam1, safeTeam2);
+            console.log("Called Android.showPrediction with safe parameters");
+        } catch (e) {
+            console.error("Error calling Android.showPrediction:", e);
+        }
     } else {
-        const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
+        const deepLink = `sportsmatchpredictor://predict/${safeSport}/${encodeURIComponent(safeTeam1)}/${encodeURIComponent(safeTeam2)}`;
         console.log(`Attempting to open deep link: ${deepLink}`);
         try {
             window.location.href = deepLink;
