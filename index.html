@@ -298,23 +298,27 @@
             const activeSport = document.querySelector(".sport-btn.bg-blue-800")?.dataset.sport || "All";
             loadMatches(activeSport, searchQuery);
         }
-
 function viewPrediction(sport, team1, team2) {
-    const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
-    console.log(`Attempting to open deep link: ${deepLink}`); // Для отладки
-
-    try {
-        window.location.href = deepLink;
-    } catch (e) {
-        console.error("Failed to open deep link:", e);
-    }
-
-    setTimeout(() => {
-        if (document.hasFocus()) {
-            console.log("App not opened, showing download modal");
-            document.getElementById("downloadModal").classList.remove("hidden");
+    console.log(`viewPrediction called with sport: ${sport}, team1: ${team1}, team2: ${team2}`);
+    if (typeof Android !== 'undefined' && Android.showPrediction) {
+        // Если WebView активен, используем JavaScript-интерфейс
+        Android.showPrediction(sport, team1, team2);
+    } else {
+        // Формируем deep link для запуска приложения
+        const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
+        console.log(`Attempting to open deep link: ${deepLink}`);
+        try {
+            window.location.href = deepLink;
+        } catch (e) {
+            console.error("Failed to open deep link:", e);
         }
-    }, 1500);
+        setTimeout(() => {
+            if (document.hasFocus()) {
+                console.log("App not opened, showing download modal");
+                document.getElementById("downloadModal").classList.remove("hidden");
+            }
+        }, 1500);
+    }
 }
 
         function downloadApp() {
