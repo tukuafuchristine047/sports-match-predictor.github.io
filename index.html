@@ -300,25 +300,23 @@
         }
 
         function viewPrediction(sport, team1, team2) {
-            // Формируем deep link для приложения
+            // Фор形成 deep link для приложения
             const deepLink = `sportsmatchpredictor://predict/${sport.toLowerCase()}/${encodeURIComponent(team1)}/${encodeURIComponent(team2)}`;
 
-            // Проверяем, установлено ли приложение
-            if (typeof Android !== 'undefined' && Android.showPrediction) {
-                // Если есть нативный интерфейс, используем его
-                Android.showPrediction(sport, team1, team2);
-            } else {
-                // Пытаемся открыть deep link
+            // Пытаемся открыть deep link
+            try {
                 window.location.href = deepLink;
-
-                // Устанавливаем таймер, чтобы показать модальное окно, если приложение не открылось
-                setTimeout(() => {
-                    if (document.hasFocus()) {
-                        // Если страница всё ещё в фокусе, приложение, вероятно, не установлено
-                        document.getElementById("downloadModal").classList.remove("hidden");
-                    }
-                }, 1000);
+            } catch (e) {
+                console.error("Failed to open deep link:", e);
             }
+
+            // Устанавливаем таймер, чтобы показать модальное окно, если приложение не открылось
+            setTimeout(() => {
+                if (document.hasFocus()) {
+                    // Если страница всё ещё в фокусе, приложение, вероятно, не установлено
+                    document.getElementById("downloadModal").classList.remove("hidden");
+                }
+            }, 1500); // Увеличиваем таймер до 1.5 секунд для большей надёжности
         }
 
         function downloadApp() {
